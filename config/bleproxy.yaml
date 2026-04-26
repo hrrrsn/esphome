@@ -1,0 +1,24 @@
+api:
+  on_client_connected:
+    - logger.log: "Bluetooth scanning active"
+    - esp32_ble_tracker.start_scan:
+        continuous: true
+        
+  on_client_disconnected:
+    if:
+      condition:
+        not:
+          api.connected:
+      then:
+        - logger.log: "Bluetooth scanning inactive"
+        - esp32_ble_tracker.stop_scan:
+
+esp32_ble_tracker:
+  scan_parameters:
+    continuous: false
+    active: true
+    interval: 320ms
+    window: 300ms
+
+bluetooth_proxy:
+  active: true

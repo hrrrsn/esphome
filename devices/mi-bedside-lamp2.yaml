@@ -1,0 +1,27 @@
+packages:
+  bslamp2:
+    url: https://github.com/mmakaay/esphome-xiaomi_bslamp2
+    ref: dev
+    files:
+      - packages/core.yaml
+      - packages/behavior_default.yaml
+      - packages/ota_feedback.yaml
+      - packages/activate_preset_svc.yaml
+    refresh: 0s
+  base: !include ../config/base.yaml
+  wifi: !include ../config/wifi.yaml
+  bleproxy: !include ../config/bleproxy.yaml
+
+substitutions:
+  name: bedside-lamp
+  friendly_name: Bedside Lamp
+  light_name: Light
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  comment: Xiaomi Mi Bedside Lamp 2
+  name_add_mac_suffix: true
+  project:
+    name: Yeelight Technology.MJCTD02YL
+    version: dev

@@ -1,0 +1,23 @@
+packages:
+  zb-gw03:
+    url: https://github.com/syssi/esphome-zb-gw03
+    ref: main
+    files:
+      - packages/core.yaml
+      - packages/ethernet.yaml
+      - packages/status_led.yaml
+      - packages/green_led.yaml
+      - packages/button_pairing_mode.yaml
+    refresh: 0s
+  base: !include ../config/base.yaml
+  bleproxy: !include ../config/bleproxy.yaml
+
+substitutions:
+  name: zigbee-gw
+  device_description: "eWeLink ZB-GW03 Zigbee Gateway"
+
+text_sensor:
+  - platform: ethernet_info
+    ip_address:
+      name: "IP Address"
+      internal: true

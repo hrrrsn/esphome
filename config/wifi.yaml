@@ -1,0 +1,57 @@
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "${friendly_name}"
+    password: !secret ap_password
+
+captive_portal:
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 60s
+    internal: true
+    web_server:
+      sorting_group_id: networking
+      
+  - platform: copy
+    source_id: wifi_signal_db
+    name: "WiFi Signal"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    internal: true
+    device_class: ""
+    web_server:
+      sorting_group_id: networking
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "WiFi IP Address"
+      internal: true
+      # entity_category: diagnostic
+      web_server:
+        sorting_group_id: networking
+  - platform: wifi_info
+    ssid:
+      name: "WiFi SSID"
+      internal: true
+      # entity_category: diagnostic
+      web_server:
+        sorting_group_id: networking
+    mac_address:
+      name: "WiFi MAC Address"
+      internal: true
+      # entity_category: diagnostic
+      web_server:
+        sorting_group_id: networking
+
+button:
+  - platform: safe_mode
+    name: "Safe Mode"
+    internal: true
+    web_server:
+      sorting_group_id: controls

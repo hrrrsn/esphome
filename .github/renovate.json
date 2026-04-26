@@ -1,0 +1,40 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices"
+  ],
+  "dependencyDashboard": true,
+  "pinDigests": false,
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 1000,
+  "separateMinorPatch": true,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "ESPHOME_IMAGE  := ghcr\\.io/esphome/esphome:(?<currentValue>[^@\\s]+)(@(?<currentDigest>sha256:[a-f0-9]+))?"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/esphome/esphome"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "**/esphome/esphome"
+      ],
+      "automerge": false,
+      "commitMessageTopic": "esphome",
+      "separateMinorPatch": true,
+      "separateMajorMinor": true,
+      "separateMultipleMajor": true,
+      "separateMultipleMinor": true
+    }
+  ]
+}

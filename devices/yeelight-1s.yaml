@@ -1,0 +1,55 @@
+packages:
+  base: !include ../config/base.yaml
+  wifi: !include ../config/wifi.yaml
+  bleproxy: !include ../config/bleproxy.yaml
+
+substitutions:
+  name: yeelight-1s
+  friendly_name: "Yeelight 1S"
+  device_description: "Yeelight Lightstrip 1S"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  comment: ${device_description}
+  name_add_mac_suffix: true
+
+esp32:
+  board: esp32doit-devkit-v1
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_BT_BLE_42_FEATURES_SUPPORTED: y
+      CONFIG_BT_BLE_50_FEATURES_SUPPORTED: y
+      CONFIG_FREERTOS_UNICORE: y
+    advanced:
+      ignore_efuse_mac_crc: true
+      ignore_efuse_custom_mac: true
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO19
+    name: "button"
+    on_press:
+      - light.toggle: light0
+
+output:
+  - platform: ledc
+    pin: GPIO13
+    id: output_red
+  - platform: ledc
+    pin: GPIO14
+    id: output_green
+  - platform: ledc
+    pin: GPIO5
+    id: output_blue
+
+light:
+  - platform: rgb
+    id: light0
+    name: "Light"
+    red: output_red
+    green: output_green
+    blue: output_blue
+    gamma_correct: 0

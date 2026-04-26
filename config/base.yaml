@@ -1,0 +1,94 @@
+substitutions:
+  log_level: "DEBUG"
+  timezone: "Pacific/Auckland"
+  sntp_server_1: "0.pool.ntp.org"
+  sntp_server_2: "1.pool.ntp.org"
+  sntp_server_3: "2.pool.ntp.org"
+
+logger:
+  level: ${log_level}
+
+button:
+  - platform: restart
+    name: "Restart"
+    internal: true
+    web_server:
+      sorting_group_id: controls
+
+api:
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+  - platform: web_server
+
+web_server:
+  port: 80
+  include_internal: true
+  version: 3
+  sorting_groups:
+    - id: controls
+      name: "Controls"
+      sorting_weight: 10
+    - id: networking
+      name: "Networking"
+      sorting_weight: 20
+    - id: diagnostics
+      name: "System"
+      sorting_weight: 30
+
+time:
+  - platform: sntp
+    timezone: ${timezone}
+    servers:
+      - ${sntp_server_1}
+      - ${sntp_server_2}
+      - ${sntp_server_3}
+
+mdns:
+  disabled: false
+
+debug:
+  update_interval: 60s
+
+binary_sensor:
+  - platform: status
+    name: "Status"
+    internal: true
+    web_server:
+      sorting_group_id: diagnostics
+
+sensor:
+  - platform: uptime
+    id: uptime_sensor
+    name: "Uptime"
+    internal: true
+    web_server:
+      sorting_group_id: diagnostics
+
+  - platform: debug
+    free:
+      name: "Heap Free"
+      internal: true
+      web_server:
+        sorting_group_id: diagnostics
+    loop_time:
+      name: "Loop Time"
+      internal: true
+      web_server:
+        sorting_group_id: diagnostics
+
+text_sensor:
+  - platform: version
+    name: "Version"
+    internal: true
+    hide_hash: true
+    web_server:
+      sorting_group_id: diagnostics
+
+  - platform: debug
+    reset_reason:
+      name: "Reset Reason"
+      internal: true
+      web_server:
+        sorting_group_id: diagnostics

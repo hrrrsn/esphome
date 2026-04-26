@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'config/**'
+      - 'devices/**'
+      - 'instances.conf'
+      - 'Makefile'
+  pull_request:
+    paths:
+      - 'config/**'
+      - 'devices/**'
+      - 'instances.conf'
+      - 'Makefile'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Generate dummy secrets.yaml
+        run: |
+          cat > config/secrets.yaml <<EOF
+          wifi_ssid: "ci-example"
+          wifi_password: "ci-example"
+          ap_password: "ci-example"
+          ota_password: "ci-example"
+          EOF
+
+      - name: Compile all firmwares
+        run: make all
+
+      - name: Collect firmware artifacts
+        run: |
+          mkdir -p dist
+          for dir in devices/.esphome/build/*/; do
+            name=$(basename "$dir")
+            ota="$dir/.pioenvs/$name/firmware.ota.bin"
+            full="$dir/.pioenvs/$name/firmware.bin"
+            [ -f "$ota" ]  && cp "$ota"  "dist/${name}.ota.bin"
+            [ -f "$full" ] && cp "$full" "dist/${name}.bin"
+          done
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: firmware-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error

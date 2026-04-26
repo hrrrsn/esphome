@@ -1,0 +1,5 @@
+.esphome/
+.platformio/
+.cache/
+devices/.gitignore
+config/secrets.yaml

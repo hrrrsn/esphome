@@ -8,6 +8,12 @@ substitutions:
 logger:
   level: ${log_level}
 
+udp:
+  addresses:
+    - 10.64.22.203
+
+syslog:
+
 button:
   - platform: restart
     name: "Restart"

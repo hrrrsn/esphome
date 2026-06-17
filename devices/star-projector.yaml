@@ -1,0 +1,177 @@
+# https://github.com/M4GNV5/esphome-SK20-Nebula-Light
+
+packages:
+  base: !include ../config/base.yaml
+  wifi: !include ../config/wifi.yaml
+
+substitutions:
+  name: esp-nebula
+  friendly_name: "Nebula"
+  device_description: "Nebula Star Projector"
+  node_name: esp_nebula
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  comment: ${device_description}
+  name_add_mac_suffix: true
+  project:
+    name: "tuya.nebula"
+    version: "RSH-WiFi-Sky01"
+
+bk72xx:
+  board: wb3s
+
+logger:
+  logs:
+    light: none
+
+globals:
+  - id: dim
+    type: bool
+    restore_value: no
+    initial_value: "false"
+
+light:
+  - platform: rgb
+    name: ${friendly_name} Light
+    icon: mdi:star-shooting
+    id: rgb_light
+    red: red
+    green: green
+    blue: blue
+    restore_mode: RESTORE_DEFAULT_OFF
+    default_transition_length: 2s
+    effects:
+      - random:
+          name: Random
+          transition_length: 5s
+          update_interval: 5s
+      - random:
+          name: Random Slow
+          transition_length: 10s
+          update_interval: 5s
+    on_turn_on:
+      then:
+        - light.turn_on: btn_led
+    on_turn_off:
+      then:
+        - light.turn_off: btn_led
+
+  - platform: monochromatic
+    name: ${friendly_name} Laser
+    icon: mdi:laser-pointer
+    id: laser
+    output: laser_pwm
+    restore_mode: ALWAYS_OFF
+    default_transition_length: 3s
+
+  - platform: status_led
+    name: ${friendly_name} Status Led
+    icon: mdi:led-outline
+    entity_category: diagnostic
+    id: ${node_name}_status_led
+    pin: P1
+    internal: true
+
+  - platform: monochromatic
+    name: ${friendly_name} Button Led
+    icon: mdi:led-outline
+    entity_category: diagnostic
+    id: btn_led
+    output: btn_led_pwm
+    restore_mode: ALWAYS_OFF
+
+fan:
+  platform: speed
+  name: ${friendly_name} Motor
+  icon: mdi:play-speed
+  id: motor
+  output: motor_pwm
+  restore_mode: ALWAYS_OFF
+
+output:
+  - platform: libretiny_pwm
+    id: red
+    pin: P9
+    inverted: true
+
+  - platform: libretiny_pwm
+    id: green
+    pin: P24
+    inverted: true
+
+  - platform: libretiny_pwm
+    id: blue
+    pin: P26
+    inverted: true
+
+  - platform: libretiny_pwm
+    id: laser_pwm
+    pin: P8
+    inverted: true
+
+  - platform: libretiny_pwm
+    id: motor_pwm
+    pin: P6
+    min_power: 15%
+
+  - platform: libretiny_pwm
+    id: btn_led_pwm
+    pin: P7
+    inverted: true
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: P14
+      mode: INPUT_PULLUP
+      inverted: true
+    name: ${friendly_name} Button
+    id: ${node_name}_button
+    on_multi_click:
+      # single click
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.350s
+        then:
+          - light.toggle: rgb_light
+      # double click
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 0.35s
+          - ON for at most 1s
+          - OFF for at least 0.35s
+        then:
+          - light.toggle: laser
+    # hold
+    on_press:
+      then:
+        - if:
+            condition:
+              lambda: |-
+                return id(dim);
+            then:
+              - delay: 0.1s
+              - while:
+                  condition:
+                    binary_sensor.is_on: ${node_name}_button
+                  then:
+                    - light.dim_relative:
+                        id: rgb_light
+                        relative_brightness: 5%
+                    - delay: 0.1s
+              - lambda: |-
+                  id(dim) = (false);
+            else:
+              - delay: 0.1s
+              - while:
+                  condition:
+                    binary_sensor.is_on: ${node_name}_button
+                  then:
+                    - light.dim_relative:
+                        id: rgb_light
+                        relative_brightness: 5%
+                    - delay: 0.1s
+              - lambda: |-
+                  id(dim) = (true);

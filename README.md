@@ -12,3 +12,4 @@ Personal ESPHome configurations for my IoT devices
 | Mi Bedside Lamp 2 | ESP32 | [AliExpress](https://s.click.aliexpress.com/e/_c4Em0VUX) · [Flashing](https://github.com/mmakaay/esphome-xiaomi_bslamp2/blob/dev/doc/flashing.md) |
 | M5Stack Atom S3 Lite | ESP32-S3 | [AliExpress](https://s.click.aliexpress.com/e/_c3USIY8L) |
 | Yeelight Strip 1S | ESP32 | [AliExpress](https://s.click.aliexpress.com/e/_c2IzIEtz) · [Flashing](https://web.archive.org/web/20260310123512/https://wouterdev.nl/yeelight-led-strip-1s-flash-esphome/) |
+| Tuya Star Projector | WB3S (BK7231S) | [AliExpress](https://s.click.aliexpress.com/e/_c4aLPdWh) · [Flashing](https://github.com/M4GNV5/esphome-SK20-Nebula-Light) |

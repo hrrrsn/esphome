@@ -1,4 +1,4 @@
-ESPHOME_IMAGE  := ghcr.io/esphome/esphome:2026.6.5
+ESPHOME_IMAGE  := ghcr.io/esphome/esphome:2026.7.4
 PODMAN         := podman run --rm --userns=keep-id -v "$(CURDIR)":/config:z -e TZ=$(readlink /etc/localtime | sed 's|.*/zoneinfo/||') --network=host $(ESPHOME_IMAGE)
 VERBS          := help deploy deploy-all compile logs ping all
 DEVICES_FILE   := instances.conf

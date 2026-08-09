@@ -38,11 +38,20 @@ jobs:
           mkdir -p dist
           for dir in devices/.esphome/build/*/; do
             name=$(basename "$dir")
-            ota="$dir/.pioenvs/$name/firmware.ota.bin"
-            full="$dir/.pioenvs/$name/firmware.bin"
-            [ -f "$ota" ]  && cp "$ota"  "dist/${name}.ota.bin"
-            [ -f "$full" ] && cp "$full" "dist/${name}.bin"
+            for full in "$dir/build/firmware.factory.bin" "$dir/.pioenvs/$name/firmware.bin"; do
+              if [ -f "$full" ]; then
+                cp "$full" "dist/${name}.bin"
+                break
+              fi
+            done
+            for ota in "$dir/build/firmware.ota.bin" "$dir/.pioenvs/$name/firmware.ota.bin"; do
+              if [ -f "$ota" ]; then
+                cp "$ota" "dist/${name}.ota.bin"
+                break
+              fi
+            done
           done
+          exit 0
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

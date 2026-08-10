@@ -3,3 +3,4 @@
 .cache/
 devices/.gitignore
 config/secrets.yaml
+.esphome-version.py

@@ -1,4 +1,4 @@
-ESPHOME_IMAGE  := ghcr.io/esphome/esphome:2026.8.0
+ESPHOME_IMAGE  := ghcr.io/esphome/esphome:2026.8.2
 PODMAN         := podman run --rm --userns=keep-id -v "$(CURDIR)":/config:z -e TZ=$(readlink /etc/localtime | sed 's|.*/zoneinfo/||') --network=host $(ESPHOME_IMAGE)
 VERSION_SCRIPT := $(CURDIR)/.esphome-version.py
 VERBS          := help deploy deploy-all compile logs ping all version
